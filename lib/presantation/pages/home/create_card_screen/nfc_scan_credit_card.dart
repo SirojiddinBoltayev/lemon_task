@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lemon_task/app.dart';
@@ -12,9 +11,9 @@ import 'package:nfc_manager/nfc_manager.dart';
 import '../../../../constants/app_colors/app_colors.dart';
 
 class NfcScanCreditCard extends StatefulWidget {
-  final Function(NfcTag tag) onSuccess;
+  // final Function(NfcTag tag) onSuccess;
 
-  const NfcScanCreditCard({super.key, required this.onSuccess});
+  const NfcScanCreditCard({super.key});
 
   static String routeName = "/nfc_scan_credit_card";
 
@@ -29,10 +28,43 @@ class _NfcScanCreditCardState extends State<NfcScanCreditCard> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    nfcManager.startSession(onDiscovered: (NfcTag tag) async {
-      // Do something with an NfcTag instance.
+
+    // nfcManager.startSession(onDiscovered: (NfcTag tag) async {
+    //   // Do something with an NfcTag instance.
+    //   if (tag.handle.isNotEmpty) {
+    //     // widget.onSuccess.call(tag);
+    //     setState(() {
+    //       final myJson = Map<String, dynamic>.from(tag.data as Map);
+    //
+    //       nfcResponseModel =
+    //           NfcResponseModel.fromJson(jsonDecode(json.encode(myJson)));
+    //     });
+    //     nfcTag = tag;
+    //     // nfcManager.stopSession();
+    //   }
+    // }, onError: (error) async {
+    //   log(error.toString());
+    //   log(error.type.toString());
+    //   log(error.message.toString());
+    //   log(error.details.toString());
+    // });
+  }
+
+  @override
+  void dispose() {
+    _tagRead();
+    super.dispose();
+    nfcManager.stopSession();
+  }
+
+  void _tagRead() {
+    nfcManager.startSession(
+        onDiscovered: (NfcTag tag) async {
+
+          debugPrint('NFC tag discovered:-------------------------${tag.data}');
+
+          // Do something with an NfcTag instance.
       if (tag.handle.isNotEmpty) {
         // widget.onSuccess.call(tag);
         setState(() {
@@ -53,112 +85,117 @@ class _NfcScanCreditCardState extends State<NfcScanCreditCard> {
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    nfcManager.stopSession();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: AppText("Nfc scan credit card",
+        title: const AppText("Nfc scan credit card",
             color: AppColors.white, fontSize: 22),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Center(
-                child:
-                    AppText("NFC ni yoqing va kartani qurilmangizga qo‘ying"),
+      body: FutureBuilder(
+        future: NfcManager.instance.isAvailable(),
+        builder: (context, ss) =>
+        // ss.data != true
+            // ? Center(child: Text('NfcManager.isAvailable(): ${ss.data}'))
+            // :
+        Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Center(
+                        child: AppText(
+                            "NFC ni yoqing va kartani qurilmangizga qo‘ying"),
+                      ),
+                      Lottie.asset(AppAssets.nfcScanLottie),
+
+                      ElevatedButton(
+                        onPressed: _tagRead,
+                        child: const Text("Tag Read"),
+                      ),
+
+                      // isodep
+                      AppText(
+                          maxLines: 3,
+                          "isodep->historicalBytes: ${(nfcResponseModel?.isodep?.historicalBytes ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "isodep->hiLayerResponse: ${(nfcResponseModel?.isodep?.hiLayerResponse ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "isodep->identifier: ${(nfcResponseModel?.isodep?.identifier ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "isodep->isExtendedLengthApduSupported: ${(nfcResponseModel?.isodep?.isExtendedLengthApduSupported ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "isodep->maxTransceiveLength: ${(nfcResponseModel?.isodep?.maxTransceiveLength ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "isodep->timeout: ${(nfcResponseModel?.isodep?.timeout ?? "").toString()}"),
+
+                      12.verticalSpace,
+
+                      // mifareclassic
+                      AppText(
+                          maxLines: 3,
+                          "mifareclassic->timeout: ${(nfcResponseModel?.mifareclassic?.timeout ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "mifareclassic->maxTransceiveLength: ${(nfcResponseModel?.mifareclassic?.maxTransceiveLength ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "mifareclassic->identifier: ${(nfcResponseModel?.mifareclassic?.identifier ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "mifareclassic->type: ${(nfcResponseModel?.mifareclassic?.type ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "mifareclassic->size: ${(nfcResponseModel?.mifareclassic?.size ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "mifareclassic->blockCount: ${(nfcResponseModel?.mifareclassic?.blockCount ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "mifareclassic->sectorCount: ${(nfcResponseModel?.mifareclassic?.sectorCount ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "mifareclassic->sectorCount: ${(nfcResponseModel?.mifareclassic?.sectorCount ?? "").toString()}"),
+                      12.verticalSpace,
+                      // ndefformatable
+                      AppText(
+                          maxLines: 3,
+                          "ndefformatable->identifier: ${(nfcResponseModel?.ndefformatable?.identifier ?? "").toString()}"),
+                      12.verticalSpace,
+
+                      // nfca
+                      AppText(
+                          maxLines: 3,
+                          "nfca->identifier: ${(nfcResponseModel?.nfca?.identifier ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "nfca->maxTransceiveLength: ${(nfcResponseModel?.nfca?.maxTransceiveLength ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "nfca->timeout: ${(nfcResponseModel?.nfca?.timeout ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "nfca->atqa: ${(nfcResponseModel?.nfca?.atqa ?? "").toString()}"),
+                      AppText(
+                          maxLines: 3,
+                          "nfca->sak: ${(nfcResponseModel?.nfca?.sak ?? "").toString()}"),
+
+                      12.verticalSpace,
+                      // handle
+                      AppText(
+                          maxLines: 3,
+                          "handle: ${nfcTag?.handle.toString() ?? " "}"),
+                    ],
+                  ),
+                ),
               ),
-              Lottie.asset(AppAssets.nfcScanLottie),
-
-              // isodep
-              AppText(
-                maxLines: 3,
-                  "isodep->historicalBytes: ${(nfcResponseModel?.isodep?.historicalBytes ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "isodep->hiLayerResponse: ${(nfcResponseModel?.isodep?.hiLayerResponse ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "isodep->identifier: ${(nfcResponseModel?.isodep?.identifier ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "isodep->isExtendedLengthApduSupported: ${(nfcResponseModel?.isodep?.isExtendedLengthApduSupported ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "isodep->maxTransceiveLength: ${(nfcResponseModel?.isodep?.maxTransceiveLength ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "isodep->timeout: ${(nfcResponseModel?.isodep?.timeout ?? "").toString()}"),
-
-              12.verticalSpace,
-
-              // mifareclassic
-              AppText(
-                  maxLines: 3,
-                  "mifareclassic->timeout: ${(nfcResponseModel?.mifareclassic?.timeout ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "mifareclassic->maxTransceiveLength: ${(nfcResponseModel?.mifareclassic?.maxTransceiveLength ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "mifareclassic->identifier: ${(nfcResponseModel?.mifareclassic?.identifier ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "mifareclassic->type: ${(nfcResponseModel?.mifareclassic?.type ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "mifareclassic->size: ${(nfcResponseModel?.mifareclassic?.size ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "mifareclassic->blockCount: ${(nfcResponseModel?.mifareclassic?.blockCount ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "mifareclassic->sectorCount: ${(nfcResponseModel?.mifareclassic?.sectorCount ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "mifareclassic->sectorCount: ${(nfcResponseModel?.mifareclassic?.sectorCount ?? "").toString()}"),
-              12.verticalSpace,
-              // ndefformatable
-              AppText(
-                  maxLines: 3,
-                  "ndefformatable->identifier: ${(nfcResponseModel?.ndefformatable?.identifier ?? "").toString()}"),
-              12.verticalSpace,
-
-              // nfca
-              AppText(
-                  maxLines: 3,
-                  "nfca->identifier: ${(nfcResponseModel?.nfca?.identifier ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "nfca->maxTransceiveLength: ${(nfcResponseModel?.nfca?.maxTransceiveLength ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "nfca->timeout: ${(nfcResponseModel?.nfca?.timeout ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "nfca->atqa: ${(nfcResponseModel?.nfca?.atqa ?? "").toString()}"),
-              AppText(
-                  maxLines: 3,
-                  "nfca->sak: ${(nfcResponseModel?.nfca?.sak ?? "").toString()}"),
-
-              12.verticalSpace,
-              // handle
-              AppText(
-                  maxLines: 3,
-                  "handle: ${nfcTag?.handle.toString() ?? " "}"),
-            ],
-          ),
-        ),
       ),
     );
   }

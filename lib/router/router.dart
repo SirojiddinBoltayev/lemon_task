@@ -49,9 +49,9 @@ class AppRouter {
         path: "/nfc_scan_credit_card",
         name: NfcScanCreditCard.routeName,
         builder: (context, state) {
-          final data = state.extra as Map<String, dynamic>;
+          // final data = state.extra as Map<String, dynamic>;
           return  NfcScanCreditCard(
-            onSuccess: data['onSuccess'],
+            // onSuccess: data['onSuccess'],
           );
         },
       ),

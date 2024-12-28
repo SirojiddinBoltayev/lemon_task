@@ -6,7 +6,7 @@ import 'package:lemon_task/constants/app_assets/app_assets.dart';
 import 'package:lemon_task/constants/app_colors/app_colors.dart';
 import 'package:lemon_task/presantation/component/app_text/app_text.dart';
 import 'package:lemon_task/presantation/component/custom_svg.dart';
-import 'package:nfc_manager/nfc_manager.dart';
+// import 'package:nfc_manager/nfc_manager.dart';
 
 import '../../../constants/app_source/app_source.dart';
 import '../../component/circle_button_container.dart';
@@ -41,13 +41,15 @@ class _HomePageState extends State<HomePage> {
               borderColor: AppColors.white,
               icon: AppCustomSvgWidgetAsset(AppAssets.nfcPayIconSvg),
               onPressed: () async {
-                AppNavigator.push(NfcScanCreditCard.routeName, extra: {
-                  "onSuccess": (NfcTag tag) {
-                    AppNavigator.pop();
-                    log("data: ${tag.data.toString()}");
-                    log("handle: ${tag.handle.toString()}");
-                  }
-                });
+                AppNavigator.push(NfcScanCreditCard.routeName,
+                //     extra: {
+                //   "onSuccess": (NfcTag tag) {
+                //     AppNavigator.pop();
+                //     log("data: ${tag.data.toString()}");
+                //     log("handle: ${tag.handle.toString()}");
+                //   }
+                // }
+                );
               }),
           12.sp.horizontalSpace,
         ],
