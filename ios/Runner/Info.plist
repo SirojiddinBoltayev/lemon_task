@@ -45,5 +45,22 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+    <string>For ML Scanner</string>
+    <key>Privacy - NFC Scan Usage Description</key>
+    <string>This app uses NFC to interact with compatible tags.</string>
+    <key>com.apple.developer.nfc.readersession.felica.systemcodes</key>
+    <array>
+        <string>NDEF</string>
+        <string>Felica</string>
+        <string>ISO7816</string>
+        <string>Iso15693</string>
+        <string>MiFare</string>
+    </array>
+    <key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>
+    <array>
+        <string>*</string>
+    </array>
+
 </dict>
 </plist>
